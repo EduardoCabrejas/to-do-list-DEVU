@@ -1,0 +1,1 @@
+const tasks = await Task.find({ userId }).sort({ createdAt: -1 }); // Más recientes primero
