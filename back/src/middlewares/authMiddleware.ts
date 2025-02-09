@@ -1,31 +1,72 @@
-import { Request, Response, NextFunction } from "express";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { IUser } from "../entities/User";
-
-const secret = process.env.JWT_SECRET || "supersecretkey";
-
-interface TokenPayload {
-  id: string;
-  email: string;
-  name: string;
+import { Request, Response, NextFunction } from "express";
+import { UserDto } from "../dto/UserDto";
+import { User } from "../entities/User";
+// Extending the Request interface to include user of type UserDto
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: UserDto;
+  }
 }
 
-export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.header("Authorization")?.split(" ")[1];
-
-  if (!token) return res.status(401).json({ message: "Acceso denegado" });
+export const checkEmailExists = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const { email } = req.body;
 
   try {
-    const decoded = jwt.verify(token, secret) as TokenPayload;
-    
-    req.user = {
-      _id: decoded.id,
-      email: decoded.email,
-      name: decoded.name,
-    } as IUser;
-    res.status(201).json({ message: "Acceso Autorizado" });
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      res.status(400).json({ message: "The user with this email already exist" });
+      return;
+    }
+
     next();
   } catch (error) {
-    res.status(403).json({ message: "Token inválido" });
+    next(error);
+  }
+};
+
+export const checkLoginCredentials = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      res.status(400).json({ message: "Invalid email" });
+      return;
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      res.status(400).json({ message: "Invalid password" });
+      return;
+    }
+
+    req.user = new UserDto(user);
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getJwtMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+  const token = req.header("Authorization")?.split(" ")[1];
+  if (!token) {
+    res.status(401).json({ message: "Access denied. No token provided." });
+    return;
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
+    const user = User.findOne({ id: decoded.userId });
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+    req.user = new UserDto(user);
+    next();
+  } catch (err) {
+    res.status(400).json({ message: "Invalid token" });
+    return;
   }
 };

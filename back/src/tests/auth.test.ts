@@ -1,13 +1,13 @@
 import request from "supertest";
-import {app} from "../server"; // Asegúrate de importar tu app correctamente
+import {app} from "../server";
 import { User } from "../entities/User";
 
 describe("Auth API", () => {
   beforeAll(async () => {
-    await User.deleteMany({}); // Limpia la base de datos antes de las pruebas
+    await User.deleteMany({});
   });
 
-  it("Debe registrar un nuevo usuario", async () => {
+  it("Have to register a new User", async () => {
     const res = await request(app).post("/api/auth/register").send({
       name: "Test User",
       email: "test@example.com",
@@ -19,7 +19,7 @@ describe("Auth API", () => {
     expect(res.body.user).toHaveProperty("email", "test@example.com");
   });
 
-  it("Debe iniciar sesión y recibir un token", async () => {
+  it("Have to login and get a Token", async () => {
     const res = await request(app).post("/api/auth/login").send({
       email: "test@example.com",
       password: "password123"

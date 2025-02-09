@@ -4,9 +4,9 @@ export interface ITask extends Document {
   title: string;
   description?: string;
   type: string;
-  status: "pending" | "in-progress" | "completed" | "archived";
-  dueDate?: Date;
-  priority?: "low" | "medium" | "high";
+    status: "Pending" | "In-Progress" | "Completed";
+    dueDate?: Date;
+    priority?: "Low" | "Medium" | "High";
   userId: Schema.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -19,16 +19,16 @@ const TaskSchema = new Schema<ITask>(
     type: { type: String, required: true },
     status: {
       type: String,
-      enum: ["pending", "in-progress", "completed", "archived"],
-      default: "pending",
+      enum: ["Pending", "In-Progress", "Completed"],
+      default: "Pending",
     },
     dueDate: { type: Date },
     priority: {
       type: String,
-      enum: ["low", "medium", "high"],
-      default: "medium",
+      enum: ["Low", "Medium", "High"],
+      default: "Medium",
     },
-    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true }
   },
   { timestamps: true }
 );
