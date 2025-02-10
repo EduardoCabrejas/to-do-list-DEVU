@@ -4,16 +4,18 @@ import { createTask, deleteTask, getAllTasks, getTaskById } from "../services/ta
 export const createTaskController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         if (!req.user || !req.user.id) {
-        res.status(401).json({ message: "Unauthorized. User not found" });
-        return;
+            res.status(401).json({ message: "Unauthorized. User not found" });
+            return;
         }
-    const userId = req.user.id;
-    const taskData = req.body;
-  
-    const task = await createTask(userId, taskData);
-    res.status(201).json({ message: "Task created successfully", task });
+        const userId = req.user.id;
+        const taskData = req.body;
+        const task = await createTask(userId, taskData);
+        console.log("userId:", req.user.id);
+        console.log("taskData:", req.body);
+        res.status(201).json({ message: "Task created successfully", task });
     } catch (error) {
-    next(error);
+        console.error("Error creating task:", error);
+        next(error);
     }
 };
 

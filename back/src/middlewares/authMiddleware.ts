@@ -50,20 +50,27 @@ export const checkLoginCredentials = async (req: Request, res: Response, next: N
   }
 };
 
-export const getJwtMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+export const getJwtMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.header("Authorization")?.split(" ")[1];
+  console.log("Token en middleware:", token); // Verifica que el token esté presente en la solicitud
+
   if (!token) {
     res.status(401).json({ message: "Access denied. No token provided." });
     return;
   }
+
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
-    const user = User.findOne({ id: decoded.userId });
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is not defined");
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as { id: string };
+    const user = await User.findById(decoded.id);
     if (!user) {
       res.status(404).json({ message: "User not found" });
       return;
     }
-    req.user = new UserDto(user);
+
+    req.user = new UserDto(user);  // Guarda el objeto completo
     next();
   } catch (err) {
     res.status(400).json({ message: "Invalid token" });

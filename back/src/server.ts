@@ -11,8 +11,9 @@ import userRoutes from "./routes/userRoutes";
 import taskRoutes from "./routes/taskRoutes";
 
 dotenv.config();
-connectDB();
+console.log("JWT_SECRET desde server.ts :", process.env.JWT_SECRET);
 
+connectDB();
 export const app = express();
 
 // Middlewares

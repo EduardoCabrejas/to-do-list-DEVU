@@ -1,11 +1,11 @@
-import { IUser } from "../entities/User";
-import { ITasks } from "../entities/Tasks";
+import { UserDto } from "../dto/UserDto";
+import { TaskDto } from "../dto/TaskDto";
 
 declare global {
   namespace Express {
     interface Request {
-      user?: IUser;
-      task?: ITasks;
+      user?: UserDto;
+      task?: TaskDto;
     }
   }
 }

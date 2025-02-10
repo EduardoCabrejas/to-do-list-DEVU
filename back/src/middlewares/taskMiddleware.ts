@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 
 export const validateCreateTask = (req: Request, res: Response, next: NextFunction): void => {
-  const { title, type, status, userId } = req.body;
+  const { title, type, status } = req.body;
 
-  if (!title || !type || !status || !userId) {
-    res.status(400).json({ message: "Missing required fields: title, type, status, or userId." });
+  if (!title || !type || !status ) {
+    res.status(400).json({ message: "Missing required fields: title, type, or status" });
     return;
   }
 

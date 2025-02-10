@@ -3,17 +3,19 @@ import { Task } from "../entities/Task";
 import { User } from "../entities/User";
 
 export const createTask = async (userId: string, taskData: any) => {
-  const user = await User.findOne({ where: { id: userId } });
+  const user = await User.findById(userId);
   if (!user) {
     throw new Error("User not found");
   }
   const task = new Task({ ...taskData, userId });
   await task.save();
 
-  await User.findByIdAndUpdate(userId, { $push: { tasks: task._id } });
+  user.tasks.push(task._id as any);
+  await user.save();
 
   return new TaskDto(task);
 };
+
 
   export const getAllTasks = async (userId: string) => {
     const tasks = await Task.find({ userId }).sort({ createdAt: -1 });

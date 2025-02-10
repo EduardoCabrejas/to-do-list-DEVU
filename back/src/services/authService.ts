@@ -2,8 +2,6 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "../entities/User";
 
-const secret = process.env.JWT_SECRET || "secreto"; 
-
 export const registerUser = async (name: string, email: string, age: number, password: string, gender?: string, ) => {
   const existingUser = await User.findOne({ email });
   if (existingUser) {
@@ -39,7 +37,11 @@ export const loginUser = async (email: string, password: string) => {
     throw new Error("Credenciales inválidas");
   }
 
-  const token = jwt.sign({ id: user._id, email: user.email }, secret, { expiresIn: "1h" });
-
+  if (!process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET is not defined");
+  }
+  
+  const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+  console.log("JWT_SECRET en service", process.env.JWT_SECRET);
   return { token, user: { name: user.name, email: user.email } };
 };
