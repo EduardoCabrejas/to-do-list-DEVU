@@ -1,5 +1,9 @@
 import express from "express";
-import { deleteUserController, getAllController, getByIdController } from "../controllers/userController";
+import { deleteUserController,
+        getAllController,
+        getByIdController,
+        updateUserController} from "../controllers/userController";
+import { getJwtMiddleware } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 
@@ -16,7 +20,6 @@ const router = express.Router();
  *   get:
  *     summary: Get All Users
  *     tags: [Users]
- *     x-order: 2
  *     responses:
  *       200:
  *         description: Users List obtained correctly
@@ -29,7 +32,6 @@ router.get("/", getAllController);
  *   get:
  *     summary: Get a User By ID
  *     tags: [Users]
- *     x-order: 1
  *     parameters:
  *       - in: path
  *         name: id
@@ -49,7 +51,8 @@ router.get("/:id", getByIdController);
  *   delete:
  *     summary: Delete a User By ID
  *     tags: [Users]
- *     x-order: 4
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -59,8 +62,59 @@ router.get("/:id", getByIdController);
  *         description:  User ID to delete
  *     responses:
  *       200:
- *         description: User deleted correctly
+ *         description: User deleted successfully
+ *       401:
+ *         description: Unauthorized. Token is missing or invalid
+ *       403:
+ *         description: Forbidden. User can only delete their own account
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
  */
-router.delete("/:id", deleteUserController);
+router.delete("/:id", getJwtMiddleware, deleteUserController);
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   put:
+ *     summary: Update a user
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID of the user to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "John Doe"
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "johndoe@example.com"
+ *               age:
+ *                 type: integer
+ *                 minimum: 9
+ *                 example: 25
+ *               gender:
+ *                 type: string
+ *                 enum: ["male", "female", "homosexual", "trans", "hidden"]
+ *                 example: "male"
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ */
+router.put("/:id", getJwtMiddleware, updateUserController);
 
 export default router;

@@ -1,5 +1,11 @@
 import express from "express";
-import { createTaskController, deleteTaskController, getAllTasksController, getTaskByIdController } from "../controllers/taskController";
+import { 
+  createTaskController, 
+  deleteTaskController, 
+  getAllTasksController, 
+  getTaskByIdController,
+  updateTaskController 
+} from "../controllers/taskController";
 import { validateCreateTask } from "../middlewares/taskMiddleware";
 import { getJwtMiddleware } from "../middlewares/authMiddleware";
 
@@ -19,13 +25,12 @@ const router = express.Router();
  *     summary: Get All Tasks
  *     tags: [Tasks]
  *     security:
- *       - bearerAuth: []  # 🔹 Corrección aquí
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Tasks List obtained correctly
  */
 router.get("/", getJwtMiddleware, getAllTasksController);
-
 
 /**
  * @swagger
@@ -33,6 +38,8 @@ router.get("/", getJwtMiddleware, getAllTasksController);
  *   get:
  *     summary: Get a Task By ID
  *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -44,7 +51,7 @@ router.get("/", getJwtMiddleware, getAllTasksController);
  *       200:
  *         description: Task obtained correctly
  */
-router.get("/task/:id", getJwtMiddleware, getTaskByIdController);
+router.get("/:id", getJwtMiddleware, getTaskByIdController);
 
 /**
  * @swagger
@@ -63,7 +70,9 @@ router.get("/task/:id", getJwtMiddleware, getTaskByIdController);
  *             properties:
  *               title:
  *                 type: string
- *               description:
+ *               status:
+ *                 type: string
+ *               priority:
  *                 type: string
  *     responses:
  *       201:
@@ -77,6 +86,8 @@ router.post("/", getJwtMiddleware, validateCreateTask, createTaskController);
  *   delete:
  *     summary: Delete a Task By ID
  *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -88,6 +99,40 @@ router.post("/", getJwtMiddleware, validateCreateTask, createTaskController);
  *       200:
  *         description: Task deleted correctly
  */
-router.delete("/task/:id", getJwtMiddleware, deleteTaskController);
+router.delete("/:id", getJwtMiddleware, deleteTaskController);
+
+/**
+ * @swagger
+ * /tasks/{id}:
+ *   put:
+ *     summary: Update A Task
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Task ID to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *               priority:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Task updated correctly
+ */
+router.put("/:id", getJwtMiddleware, updateTaskController);
 
 export default router;

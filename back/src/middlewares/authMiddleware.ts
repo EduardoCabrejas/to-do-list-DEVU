@@ -52,7 +52,6 @@ export const checkLoginCredentials = async (req: Request, res: Response, next: N
 
 export const getJwtMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.header("Authorization")?.split(" ")[1];
-  console.log("Token en middleware:", token); // Verifica que el token esté presente en la solicitud
 
   if (!token) {
     res.status(401).json({ message: "Access denied. No token provided." });
@@ -70,7 +69,7 @@ export const getJwtMiddleware = async (req: Request, res: Response, next: NextFu
       return;
     }
 
-    req.user = new UserDto(user);  // Guarda el objeto completo
+    req.user = new UserDto(user);
     next();
   } catch (err) {
     res.status(400).json({ message: "Invalid token" });

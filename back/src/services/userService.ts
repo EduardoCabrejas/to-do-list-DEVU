@@ -2,13 +2,6 @@ import { User } from "../entities/User";
 import { UserDto } from "../dto/UserDto";
 import { Task } from "../entities/Task";
 
-interface UpdateUserData {
-  name?: string;
-  email?: string;
-  age?: number;
-  gender?: string;
-}
-
 export const getAllUsers = async (): Promise<UserDto[]> => {
   const usersData = await User.find().populate("tasks", "title type");
 
@@ -29,11 +22,17 @@ export const getAllUsers = async (): Promise<UserDto[]> => {
     return new UserDto(user);
   }
 
-  export const updateUser = async (userId: string, userData: UpdateUserData): Promise<UserDto> =>{
-    const user = await User.findByIdAndUpdate(userId, userData, { new: true });
+  export const updateUser = async (id: string, userData: UserDto): Promise<UserDto> => {
+    if (userData.email) {
+      const existingUser = await User.findOne({ email: userData.email, _id: { $ne: id } });
+      if (existingUser) throw new Error("Email is already in use by another account");
+    }
+  
+    const user = await User.findByIdAndUpdate(id, userData, { new: true });
     if (!user) throw new Error(`User does not exist`);
-    return await new UserDto(user);
-  }
+  
+    return new UserDto(user);
+  };
 
   export const deleteUser = async (id: string) => {
     const user = await User.findByIdAndDelete(id);

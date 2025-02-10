@@ -16,28 +16,27 @@ export const createTask = async (userId: string, taskData: any) => {
   return new TaskDto(task);
 };
 
+export const getAllTasks = async (userId: string) => {
+  const tasks = await Task.find({ userId }).sort({ createdAt: -1 });
+  return tasks;
+};
 
-  export const getAllTasks = async (userId: string) => {
-    const tasks = await Task.find({ userId }).sort({ createdAt: -1 });
-    if (!tasks || tasks.length === 0) {
-      throw new Error("No tasks found");
-    }
-
-    return tasks;
+export const getTaskById = async (id: string, userId: string) => {
+  const task = await Task.findOne({ _id: id, userId }).populate("userId", "name");
+  if (!task) {
+    throw new Error("Task not found or unauthorized");
   }
+  return task;
+};
 
-  export const getTaskById = async (id: string) => {
-    const task = await Task.findById(id).populate('userId', 'name');
-    if (!task) {
-      throw new Error('Task not found');
-    }
-  
-    return task;
-  };
+export const deleteTask = async (id: string, userId: string) => {
+  const task = await Task.findOneAndDelete({ _id: id, userId });
+  if (!task) throw new Error("Task not found or unauthorized");
+  return { message: "Task deleted successfully", deletedTask: task };
+};
 
-  export const deleteTask = async (id: string) => {
-    const task = await Task.findByIdAndDelete(id);
-    if (!task) throw new Error(`Task does not exist`);
-    
-    return { message: "Task deleted successfully", deletedTask: task };
-  };
+export const updateTask = async (id: string, userId: string, taskData: TaskDto): Promise<TaskDto> => {
+  const task = await Task.findOneAndUpdate({ _id: id, userId }, taskData, { new: true });
+  if (!task) throw new Error(`Task does not exist or you don't have permission to update it`);
+  return new TaskDto(task);
+};
