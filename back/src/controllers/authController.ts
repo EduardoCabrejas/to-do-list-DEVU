@@ -13,7 +13,7 @@ if (isNaN(ageNumber)) {
       res.status(400).json({ message: "Age have to be a valid number." });
       return;
     }
-const user = await registerUser(name, email, ageNumber, password, gender || undefined);
+const user = await registerUser(name, email, ageNumber.toString(), password, gender || undefined);
 res.status(201).json({ message: "Successful User Register", user });
   } catch (error) {
     next(error);

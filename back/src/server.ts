@@ -11,7 +11,6 @@ import userRoutes from "./routes/userRoutes";
 import taskRoutes from "./routes/taskRoutes";
 
 dotenv.config();
-console.log("JWT_SECRET desde server.ts :", process.env.JWT_SECRET);
 
 connectDB();
 export const app = express();
@@ -27,7 +26,7 @@ setupSwagger(app);
 
 // Rutas
 app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
+app.use("/user", userRoutes);
 app.use("/tasks", taskRoutes);
 app.get("/", (req, res) => {
   res.send("API funcionando 🚀");

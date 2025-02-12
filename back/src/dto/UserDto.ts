@@ -5,6 +5,7 @@ export class UserDto {
   name: string;
   email: string;
   age: number;
+  birthdate: string;
   gender?: string;
   tasks?: TaskDto[];
 
@@ -13,6 +14,7 @@ export class UserDto {
     this.name = user.name;
     this.email = user.email;
     this.age = user.age;
+    this.birthdate = user.birthdate;
     this.gender = user.gender || undefined;
     this.tasks = user.tasks ? user.tasks.map((task: any) => new TaskDto(task)) : [];
   }

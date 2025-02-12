@@ -4,6 +4,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   age: number;
+  birthdate: string;
   gender?: string;
   password: string;
   tasks: Schema.Types.ObjectId[];
@@ -23,6 +24,7 @@ const UserSchema = new Schema<IUser>(
         message: 'La edad debe ser mayor o igual a 9.'
       }
     },
+    birthdate: { type: String, required: true },
     gender: { 
       type: String, 
       enum: ['male', 'female', 'homosexual', 'trans', 'hidden'], 

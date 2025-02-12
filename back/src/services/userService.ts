@@ -25,7 +25,7 @@ export const getAllUsers = async (): Promise<UserDto[]> => {
   export const updateUser = async (id: string, userData: UserDto): Promise<UserDto> => {
     if (userData.email) {
       const existingUser = await User.findOne({ email: userData.email, _id: { $ne: id } });
-      if (existingUser) throw new Error("Email is already in use by another account");
+      if (existingUser) throw new Error("Email is already in use by another user");
     }
   
     const user = await User.findByIdAndUpdate(id, userData, { new: true });

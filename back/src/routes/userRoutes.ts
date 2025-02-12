@@ -16,7 +16,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /users:
+ * /user:
  *   get:
  *     summary: Get All Users
  *     tags: [Users]
@@ -28,7 +28,7 @@ router.get("/", getAllController);
 
 /**
  * @swagger
- * /users/{id}:
+ * /user/{id}:
  *   get:
  *     summary: Get a User By ID
  *     tags: [Users]
@@ -47,7 +47,7 @@ router.get("/:id", getByIdController);
 
 /**
  * @swagger
- * /users/{id}:
+ * /user/{id}:
  *   delete:
  *     summary: Delete a User By ID
  *     tags: [Users]
@@ -76,7 +76,7 @@ router.delete("/:id", getJwtMiddleware, deleteUserController);
 
 /**
  * @swagger
- * /users/{id}:
+ * /user/{id}:
  *   put:
  *     summary: Update a user
  *     tags: [Users]
