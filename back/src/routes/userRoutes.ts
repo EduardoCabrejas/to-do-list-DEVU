@@ -1,8 +1,5 @@
 import express from "express";
-import { deleteUserController,
-        getAllController,
-        getByIdController,
-        updateUserController} from "../controllers/userController";
+import { deleteUserController, getAllController, getByIdController, updateUserController } from "../controllers/userController";
 import { getJwtMiddleware } from "../middlewares/authMiddleware";
 
 const router = express.Router();
@@ -10,8 +7,8 @@ const router = express.Router();
 /**
  * @swagger
  * tags:
- *   name: Users
- *   description: API to manage Users
+ *   name: User
+ *   description: API to manage User
  */
 
 /**
@@ -52,14 +49,14 @@ router.get("/:id", getByIdController);
  *     summary: Delete a User By ID
  *     tags: [Users]
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []  // Cambiar para que use cookies
  *     parameters:
  *       - in: path
  *         name: id
  *         schema:
  *           type: string
  *         required: true
- *         description:  User ID to delete
+ *         description: User ID to delete
  *     responses:
  *       200:
  *         description: User deleted successfully
@@ -81,7 +78,7 @@ router.delete("/:id", getJwtMiddleware, deleteUserController);
  *     summary: Update a user
  *     tags: [Users]
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []  // Cambiar para que use cookies
  *     parameters:
  *       - in: path
  *         name: id

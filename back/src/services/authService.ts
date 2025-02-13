@@ -14,14 +14,14 @@ export const registerUser = async (
     throw new Error("User already exists");
   }
 
-  // Calculate age in base to birthdate
+  // Calcular la edad a partir de la fecha de nacimiento
   const birthDateObj = new Date(birthdate);
   const today = new Date();
   let calculatedAge = today.getFullYear() - birthDateObj.getFullYear();
   const monthDiff = today.getMonth() - birthDateObj.getMonth();
   const dayDiff = today.getDate() - birthDateObj.getDate();
 
-  // Adjust age if birthday didn't passe this year
+  // Ajustar edad si el cumpleaños no ha pasado este año
   if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
     calculatedAge--;
   }
@@ -60,7 +60,8 @@ export const loginUser = async (email: string, password: string) => {
     throw new Error("JWT_SECRET is not defined");
   }
   
+  // Generate Token JWT
   const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
-  console.log("JWT_SECRET en service", process.env.JWT_SECRET);
-  return { token, user: { name: user.name, email: user.email } };
+
+  return { token, user: { name: user.name, email: user.email } }; // Ya no es necesario devolver el token en el frontend
 };

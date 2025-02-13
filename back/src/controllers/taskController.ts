@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { createTask, deleteTask, getAllTasks, getTaskById, updateTask } from "../services/taskService";
 
+const isAuthenticated = (req: Request) => req.user && req.user.id;
+
 export const createTaskController = async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!req.user || !req.user.id) {
