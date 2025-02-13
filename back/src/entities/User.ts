@@ -27,7 +27,7 @@ const UserSchema = new Schema<IUser>(
     birthdate: { type: String, required: true },
     gender: { 
       type: String, 
-      enum: ['Male', 'Female', 'Homosexual', 'Trans', 'Hidden'], 
+      enum: ['Male', 'Female', 'Homosexual', 'Bisexual', 'Trans', 'Hidden'], 
       required: false
     },
     password: { type: String, required: true },
