@@ -18,14 +18,14 @@ const options = {
     ],
     components: {
       securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
+        cookieAuth: {
+          type: "apiKey",
+          in: "cookie",
+          name: "token", // 🔹 Nombre de la cookie donde se almacena el JWT
         },
       },
     },
-    security: [{ bearerAuth: [] }], // 🔹 Aplica autenticación globalmente
+    security: [{ cookieAuth: [] }], // 🔹 Aplica autenticación globalmente
   },
   apis: ["./src/routes/*.ts", "./dist/routes/*.js"],
 };
@@ -35,6 +35,7 @@ const swaggerSpec = swaggerJsDoc(options);
 export const setupSwagger = (app: Express) => {
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
     swaggerOptions: {
+      withCredentials: true, // 🔹 Habilita el envío de cookies en Swagger
       tagsSorter: "alpha",
       operationsSorter: "method",
     },

@@ -25,7 +25,7 @@ const router = express.Router();
  *     summary: Get All Tasks
  *     tags: [Tasks]
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     responses:
  *       200:
  *         description: Tasks List obtained correctly
@@ -39,7 +39,7 @@ router.get("/", getJwtMiddleware, getAllTasksController);
  *     summary: Get a Task By ID
  *     tags: [Tasks]
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -60,7 +60,7 @@ router.get("/:id", getJwtMiddleware, getTaskByIdController);
  *     summary: Create A New Task
  *     tags: [Tasks]
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -69,6 +69,8 @@ router.get("/:id", getJwtMiddleware, getTaskByIdController);
  *             type: object
  *             properties:
  *               title:
+ *                 type: string
+ *               type:
  *                 type: string
  *               status:
  *                 type: string
@@ -87,7 +89,7 @@ router.post("/", getJwtMiddleware, validateCreateTask, createTaskController);
  *     summary: Delete a Task By ID
  *     tags: [Tasks]
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -108,7 +110,7 @@ router.delete("/:id", getJwtMiddleware, deleteTaskController);
  *     summary: Update A Task
  *     tags: [Tasks]
  *     security:
- *       - bearerAuth: []
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: id

@@ -1,6 +1,7 @@
-import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import { connectDB } from "./config/db";
@@ -20,8 +21,9 @@ export const app = express();
 
 // Middlewares
 app.use(express.json());
+app.use(cookieParser());
 
-const frontendUrl = process.env.FRONTEND_URL;
+const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
 const allowedOrigins: string[] = process.env.NODE_ENV === "production"
   ? [frontendUrl!].filter(Boolean) // If frontendUrl is empty, it will be removed
   : ["http://localhost:3000", frontendUrl!].filter(Boolean);

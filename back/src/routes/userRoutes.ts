@@ -1,6 +1,7 @@
 import express from "express";
 import { deleteUserController, getAllController, getByIdController, updateUserController } from "../controllers/userController";
 import { getJwtMiddleware } from "../middlewares/authMiddleware";
+import { validateUpdateUserData } from "../middlewares/userMiddleware";
 
 const router = express.Router();
 
@@ -49,7 +50,7 @@ router.get("/:id", getByIdController);
  *     summary: Delete a User By ID
  *     tags: [Users]
  *     security:
- *       - cookieAuth: []  // Cambiar para que use cookies
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -78,7 +79,7 @@ router.delete("/:id", getJwtMiddleware, deleteUserController);
  *     summary: Update a user
  *     tags: [Users]
  *     security:
- *       - cookieAuth: []  // Cambiar para que use cookies
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -112,6 +113,6 @@ router.delete("/:id", getJwtMiddleware, deleteUserController);
  *       200:
  *         description: User updated successfully
  */
-router.put("/:id", getJwtMiddleware, updateUserController);
+router.put("/:id", getJwtMiddleware, validateUpdateUserData, updateUserController);
 
 export default router;

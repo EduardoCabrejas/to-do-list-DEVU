@@ -6,17 +6,21 @@ dotenv.config();
 
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { name, email, age, password, gender } = req.body;
-    if (!name || !email || !age || !password) {
+    const { name, email, birthdate, password, gender } = req.body;
+    
+    if (!name || !email || !birthdate || !password) {
       res.status(400).json({ message: "Required fields are missing" });
       return;
     }
-    const ageNumber = Number(age);
-    if (isNaN(ageNumber)) {
-      res.status(400).json({ message: "Age has to be a valid number." });
+
+    // Validar que birthdate sea una fecha válida
+    const birthDateObj = new Date(birthdate);
+    if (isNaN(birthDateObj.getTime())) {
+      res.status(400).json({ message: "Birthdate must be a valid date." });
       return;
     }
-    const user = await registerUser(name, email, ageNumber.toString(), password, gender || undefined);
+
+    const user = await registerUser(name, email, birthdate, password, gender || undefined);
     res.status(201).json({ message: "Successful User Register", user });
   } catch (error) {
     next(error);

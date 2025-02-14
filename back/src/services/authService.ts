@@ -61,7 +61,7 @@ export const loginUser = async (email: string, password: string) => {
   }
   
   // Generate Token JWT
-  const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+  const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET || 'ToDoDEVU', { expiresIn: "1h" });
 
   return { token, user: { name: user.name, email: user.email } }; // Ya no es necesario devolver el token en el frontend
 };

@@ -1,6 +1,6 @@
 import express from "express";
 import { register, login, logout } from "../controllers/authController";
-import { checkEmailExists, checkLoginCredentials } from "../middlewares/authMiddleware";
+import { checkEmailExists, checkLoginCredentials, validateRegister } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 
@@ -70,7 +70,7 @@ const router = express.Router();
  *                   example: 25
  *                 gender:
  *                   type: string
- *                   example: "male"
+ *                   example: "Male"
  *                 createdAt:
  *                   type: string
  *                   format: date-time
@@ -80,7 +80,7 @@ const router = express.Router();
  *       500:
  *         description: Internal server error
  */
-router.post("/register", checkEmailExists, register);
+router.post("/register", checkEmailExists, validateRegister, register);
 
 /**
  * @swagger
