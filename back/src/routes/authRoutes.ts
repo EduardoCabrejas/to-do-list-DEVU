@@ -1,6 +1,6 @@
 import express from "express";
 import { register, login, logout } from "../controllers/authController";
-import { checkEmailExists, checkLoginCredentials, validateRegister } from "../middlewares/authMiddleware";
+import { checkEmailExists, checkLoginCredentials, getJwtMiddleware, validateRegister } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 
@@ -8,14 +8,14 @@ const router = express.Router();
  * @swagger
  * tags:
  *   name: Auth
- *   description: API to manage authentication (register, login, logout)
+ *   description: API to manage authentication (signup, login, logout)
  */
 
 /**
  * @swagger
- * /auth/register:
+ * /auth/signup:
  *   post:
- *     summary: Register a new user
+ *     summary: SignUp a new user
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -80,7 +80,7 @@ const router = express.Router();
  *       500:
  *         description: Internal server error
  */
-router.post("/register", checkEmailExists, validateRegister, register);
+router.post("/signup", checkEmailExists, validateRegister, register);
 
 /**
  * @swagger
@@ -122,5 +122,10 @@ router.post("/login", checkLoginCredentials, login);
  *         description: Logout successful
  */
 router.post("/logout", logout);
+
+router.get("/me", getJwtMiddleware, (req, res) => {
+    res.status(200).json({ user: req.user });
+    return;
+});
 
 export default router;

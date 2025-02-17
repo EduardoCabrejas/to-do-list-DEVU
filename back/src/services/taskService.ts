@@ -24,7 +24,7 @@ export const createTask = async (userId: string, taskData: any) => {
     await user.save();
   } catch (error) {
     const err = error as Error;
-    throw new Error("Failed to save user tasks: " + err.message);
+    throw new Error("Failed to Create User Tasks: " + err.message);
   }
 
   return new TaskDto(task);

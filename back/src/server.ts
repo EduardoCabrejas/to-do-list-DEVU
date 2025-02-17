@@ -21,6 +21,7 @@ export const app = express();
 
 // Middlewares
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";

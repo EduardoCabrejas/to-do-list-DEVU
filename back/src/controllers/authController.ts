@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { registerUser, loginUser } from "../services/authService";
 import dotenv from "dotenv";
@@ -27,29 +28,37 @@ export const register = async (req: Request, res: Response, next: NextFunction):
   }
 };
 
-export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const login = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email, password } = req.body;
-    const data = await loginUser(email, password);
+    const user = req.user; // Asegúrate de que req.user existe
 
-    if (!data || !data.token) {
-      res.status(401).json({ message: "Invalid credentials" });
+    if (!user) {
+      res.status(400).json({ message: "User not found" });
       return;
     }
 
-    const isProduction = process.env.NODE_ENV === "production";
-
-    // Safe configuration for cookies
-    res.cookie("authToken", data.token, {
-      httpOnly: true,
-      secure: isProduction, // just in production
-      sameSite: isProduction ? "none" : "lax", // "none" if it's in Vercel, "lax" if it's in local
-      maxAge: 60 * 60 * 1000, // 1 houre
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET || "ToDoDEVU",
+      { expiresIn: "1h" }
+    );
+    res.cookie("authToken", token, {
+      httpOnly: true, // Impide que el token sea accesible a través de JavaScript en el frontend.
+      secure: process.env.NODE_ENV === "production", // Solo se enviará por HTTPS en producción.
+      sameSite: "strict", // Mejora la seguridad al limitar el envío del token a solicitudes del mismo sitio.
+      maxAge: 3600000, // Tiempo de expiración del token (1 hora en milisegundos).
     });
-
-    res.status(200).json({ message: "Successful Login" });
+    res.status(200).json({
+      message: "Login successfuly",
+      token,
+      user: {
+        name: user.name,
+        email: user.email,
+      },
+    });
   } catch (error) {
-    next(error);
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -60,7 +69,6 @@ export const logout = async (req: Request, res: Response, next: NextFunction): P
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
-
     res.status(200).json({ message: "Successful Logout" });
   } catch (error) {
     next(error);

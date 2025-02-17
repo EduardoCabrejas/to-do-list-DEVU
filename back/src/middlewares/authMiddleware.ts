@@ -1,13 +1,15 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { UserDto } from "../dto/UserDto";
 import { User } from "../entities/User";
 import { validateUserData } from "../utils/validateUserData";
-// Extending the Request interface to include user of type UserDto
-declare module "express-serve-static-core" {
-  interface Request {
-    user?: UserDto;
+import { UserDto } from "../dto/UserDto";
+// Extends Document in Express in type Request
+declare global {
+  namespace Express {
+    interface Request {
+      user?: UserDto;
+    }
   }
 }
 
@@ -45,17 +47,21 @@ export const checkLoginCredentials = async (req: Request, res: Response, next: N
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      res.status(400).json({ message: "Invalid email" });
+      res.status(401).json({ message: "Invalid email" });
       return;
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      res.status(400).json({ message: "Invalid password" });
+      res.status(401).json({ message: "Invalid password" });
       return;
     }
 
-    req.user = new UserDto(user);
+    req.user = {
+      id: user._id,
+      email: user.email,
+      name: user.name
+    } as UserDto;
     next();
   } catch (error) {
     next(error);
@@ -63,7 +69,7 @@ export const checkLoginCredentials = async (req: Request, res: Response, next: N
 };
 
 export const getJwtMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.cookies.authToken; // Get token from cookies
+  const token = req.cookies.authToken; // Obtener el token desde las cookies
 
   if (!token) {
     res.status(401).json({ message: 'Unauthorized. Token is missing or invalid' });
@@ -71,9 +77,9 @@ export const getJwtMiddleware = (req: Request, res: Response, next: NextFunction
   }
 
   try {
-    // Verify Token
+    // Verificar el token
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'ToDoDEVU');
-    req.user = decoded as UserDto; // Assign the user decodified to the req object
+    req.user = decoded as UserDto;  // Aquí asignamos UserDto a req.userDto
     next();
   } catch (err) {
     res.status(401).json({ message: 'Unauthorized. Invalid token' });
