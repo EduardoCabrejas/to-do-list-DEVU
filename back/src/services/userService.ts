@@ -23,16 +23,56 @@ export const getAllUsers = async (): Promise<UserDto[]> => {
   }
 
   export const updateUser = async (id: string, userData: UserDto): Promise<UserDto> => {
+    const allowedFields: (keyof UserDto)[] = ['name', 'gender', 'birthdate'];
+    const updateData: Partial<UserDto> = {};
+  
+    // We just allow to update the fields described in allowedFields
+    allowedFields.forEach((field) => {
+      if (userData[field] !== undefined) {
+        updateData[field] = userData[field] as any;
+      }
+    });
+  
+    // Si el email está siendo enviado como parte de la solicitud, lo ignoramos
     if (userData.email) {
-      const existingUser = await User.findOne({ email: userData.email, _id: { $ne: id } });
-      if (existingUser) throw new Error("Email is already in use by another user");
+      console.log("Email not updated: ", userData.email);
     }
   
-    const user = await User.findByIdAndUpdate(id, userData, { new: true });
+    // Si el campo birthdate está presente, recalculamos la edad
+    if (userData.birthdate) {
+      const birthDateObj = new Date(userData.birthdate);
+      const today = new Date();
+      let calculatedAge = today.getFullYear() - birthDateObj.getFullYear();
+      const monthDiff = today.getMonth() - birthDateObj.getMonth();
+      const dayDiff = today.getDate() - birthDateObj.getDate();
+  
+      // Ajustar edad si el cumpleaños no ha pasado este año
+      if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        calculatedAge--;
+      }
+  
+      // Actualizamos la edad
+      updateData.age = calculatedAge;
+  
+      // Si la edad es menor que 9, lanzamos un error
+      if (calculatedAge < 9) {
+        throw new Error("Age must be at least 9 years old.");
+      }
+    }
+  
+    // If there are no fields to update, we show an error
+    if (Object.keys(updateData).length === 0) {
+      throw new Error("No valid fields provided for update.");
+    }
+  
+    // Realizamos la actualización
+    const user = await User.findByIdAndUpdate(id, updateData, { new: true });
+  
     if (!user) throw new Error(`User does not exist`);
   
+    console.log('Updated user data:', user);
     return new UserDto(user);
-  };
+  };  
 
   export const deleteUser = async (id: string) => {
     const user = await User.findByIdAndDelete(id);

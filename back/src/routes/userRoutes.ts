@@ -1,7 +1,6 @@
 import express from "express";
 import { deleteUserController, getAllController, getByIdController, updateUserController } from "../controllers/userController";
 import { getJwtMiddleware } from "../middlewares/authMiddleware";
-import { validateUpdateUserData } from "../middlewares/userMiddleware";
 
 const router = express.Router();
 
@@ -113,6 +112,6 @@ router.delete("/:id", getJwtMiddleware, deleteUserController);
  *       200:
  *         description: User updated successfully
  */
-router.put("/:id", getJwtMiddleware, validateUpdateUserData, updateUserController);
+router.put("/:id", getJwtMiddleware, updateUserController);
 
 export default router;

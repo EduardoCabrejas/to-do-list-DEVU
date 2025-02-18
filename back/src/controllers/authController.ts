@@ -38,15 +38,15 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, email: user.email, name: user.name },
       process.env.JWT_SECRET || "ToDoDEVU",
       { expiresIn: "1h" }
     );
     res.cookie("authToken", token, {
-      httpOnly: true, // Impide que el token sea accesible a través de JavaScript en el frontend.
-      secure: process.env.NODE_ENV === "production", // Solo se enviará por HTTPS en producción.
-      sameSite: "strict", // Mejora la seguridad al limitar el envío del token a solicitudes del mismo sitio.
-      maxAge: 3600000, // Tiempo de expiración del token (1 hora en milisegundos).
+      httpOnly: true, // Protecting the accses to the token by JavaScript on the frontend.
+      secure: process.env.NODE_ENV === "production", // Just will be send it by HTTPS in production.
+      sameSite: "strict", // Improve the security limiting the sends of the token
+      maxAge: 3600000, // Expire in 1 hour
     });
     res.status(200).json({
       message: "Login successfuly",

@@ -68,9 +68,8 @@ export const checkLoginCredentials = async (req: Request, res: Response, next: N
   }
 };
 
-export const getJwtMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const getJwtMiddleware = (req: Request, res: Response, next: NextFunction): void => {
   const token = req.cookies.authToken; // Obtener el token desde las cookies
-
   if (!token) {
     res.status(401).json({ message: 'Unauthorized. Token is missing or invalid' });
     return;

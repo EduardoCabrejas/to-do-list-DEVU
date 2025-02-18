@@ -56,18 +56,18 @@ export const getByIdController = async (req: Request, res: Response, next: NextF
 
 export const updateUserController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    if (!req.user || !req.user.id) {
-      res.status(401).json({ message: "Unauthorized. User not found" });
-      return;
-    }
+
 
     const { id } = req.params;
-    if (req.user.id !== id) {
-      res.status(403).json({ message: "Forbidden. You can only update your own profile" });
-      return;
-    }
-
     const user = await updateUser(id, req.body);
+    
+        if (!user) {
+          res.status(404).json({ message: `User not found` });
+          return;
+        }
+        console.log('Updating user with ID:', id);
+        console.log('User data:', user);
+
     res.status(200).json({ message: "User updated correctly", user });
   } catch (error) {
     next(error);
