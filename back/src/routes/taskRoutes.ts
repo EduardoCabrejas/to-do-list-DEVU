@@ -73,11 +73,11 @@ router.get("/:id", getJwtMiddleware, getTaskByIdController);
  *               title:
  *                 type: string
  *               type:
- *                 type: string
+ *                 type: "Study | Sports | Daily Routine | Social | Finance"
  *               status:
- *                 type: string
+ *                 type: "Pending | In-Progress | Complete"
  *               priority:
- *                 type: string
+ *                 type: "Low | Medium | High"
  *     responses:
  *       201:
  *         description: Task created correctly

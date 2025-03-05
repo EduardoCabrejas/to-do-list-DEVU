@@ -78,7 +78,7 @@ export const getJwtMiddleware = (req: Request, res: Response, next: NextFunction
   const token = authHeader.split(" ")[1]; // Extraemos el token real
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || "ToDoDEVU");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "ToDoList");
     req.user = decoded as UserDto;  
     next();
   } catch (err) {

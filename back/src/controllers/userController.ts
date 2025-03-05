@@ -56,8 +56,6 @@ export const getByIdController = async (req: Request, res: Response, next: NextF
 
 export const updateUserController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-
-
     const { id } = req.params;
     const user = await updateUser(id, req.body);
     
@@ -65,9 +63,7 @@ export const updateUserController = async (req: Request, res: Response, next: Ne
           res.status(404).json({ message: `User not found` });
           return;
         }
-        console.log('Updating user with ID:', id);
-        console.log('User data:', user);
-
+        
     res.status(200).json({ message: "User updated correctly", user });
   } catch (error) {
     next(error);

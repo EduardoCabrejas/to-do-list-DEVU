@@ -39,7 +39,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const token = jwt.sign(
       { id: user.id, email: user.email, name: user.name },
-      process.env.JWT_SECRET || "ToDoDEVU",
+      process.env.JWT_SECRET || "ToDoList",
       { expiresIn: "1h" }
     );
 

@@ -26,7 +26,7 @@ const router = express.Router();
  *             required:
  *               - name
  *               - email
- *               - age
+ *               - birthdate
  *               - password
  *             properties:
  *               name:
@@ -36,6 +36,9 @@ const router = express.Router();
  *                 type: string
  *                 format: email
  *                 example: "johndoe@example.com"
+ *               birthdate:
+ *                 type: string
+ *                 example: "1998/12/18"
  *               age:
  *                 type: integer
  *                 minimum: 9

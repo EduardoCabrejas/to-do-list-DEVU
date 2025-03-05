@@ -31,10 +31,17 @@ const UserSchema = new Schema<IUser>(
       required: false
     },
     password: { type: String, required: true },
-    tasks: [{ type: Schema.Types.ObjectId, ref: "Task" }]  
+    tasks: [{ 
+      type: Schema.Types.ObjectId, 
+      ref: "Task", 
+      autopopulate: true // Esta opción hace que las tareas se poblen automáticamente
+    }]   
   },
   { timestamps: true }
 );
+
+// Agregar el plugin de autopopulate
+UserSchema.plugin(require('mongoose-autopopulate'));
 
 // Crear y exportar el modelo User
 export const User = model<IUser>("User", UserSchema);
