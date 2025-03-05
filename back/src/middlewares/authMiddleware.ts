@@ -69,19 +69,20 @@ export const checkLoginCredentials = async (req: Request, res: Response, next: N
 };
 
 export const getJwtMiddleware = (req: Request, res: Response, next: NextFunction): void => {
-  const token = req.cookies.authToken; // Obtener el token desde las cookies
-  if (!token) {
-    res.status(401).json({ message: 'Unauthorized. Token is missing or invalid' });
+  const authHeader = req.headers.authorization; // Tomamos el token desde los headers
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    res.status(401).json({ message: "Unauthorized. Token is missing or invalid" });
     return;
   }
 
+  const token = authHeader.split(" ")[1]; // Extraemos el token real
+
   try {
-    // Verificar el token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'ToDoDEVU');
-    req.user = decoded as UserDto;  // Aquí asignamos UserDto a req.userDto
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "ToDoDEVU");
+    req.user = decoded as UserDto;  
     next();
   } catch (err) {
-    res.status(401).json({ message: 'Unauthorized. Invalid token' });
+    res.status(401).json({ message: "Unauthorized. Invalid token" });
     return;
   }
 };

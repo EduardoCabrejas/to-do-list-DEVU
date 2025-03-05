@@ -1,5 +1,5 @@
 import express from "express";
-import { register, login, logout } from "../controllers/authController";
+import { register, login } from "../controllers/authController";
 import { checkEmailExists, checkLoginCredentials, getJwtMiddleware, validateRegister } from "../middlewares/authMiddleware";
 
 const router = express.Router();
@@ -42,8 +42,8 @@ const router = express.Router();
  *                 example: 25
  *               gender:
  *                 type: string
- *                 enum: ["male", "female", "homosexual", "trans", "hidden"]
- *                 example: "male"
+ *                 enum: ['Male', 'Female', 'Homosexual', 'Bisexual', 'Trans', 'Hidden']
+ *                 example: "Male"
  *               password:
  *                 type: string
  *                 format: password
@@ -110,18 +110,6 @@ router.post("/signup", checkEmailExists, validateRegister, register);
  *         description: Invalid credentials
  */
 router.post("/login", checkLoginCredentials, login);
-
-/**
- * @swagger
- * /auth/logout:
- *   post:
- *     summary: Log out the user
- *     tags: [Auth]
- *     responses:
- *       200:
- *         description: Logout successful
- */
-router.post("/logout", logout);
 
 router.get("/me", getJwtMiddleware, (req, res) => {
     res.status(200).json({ user: req.user });

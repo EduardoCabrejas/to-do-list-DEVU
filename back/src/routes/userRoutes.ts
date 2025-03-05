@@ -49,7 +49,7 @@ router.get("/:id", getByIdController);
  *     summary: Delete a User By ID
  *     tags: [Users]
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -78,7 +78,7 @@ router.delete("/:id", getJwtMiddleware, deleteUserController);
  *     summary: Update a user
  *     tags: [Users]
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -106,11 +106,17 @@ router.delete("/:id", getJwtMiddleware, deleteUserController);
  *                 example: 25
  *               gender:
  *                 type: string
- *                 enum: ["male", "female", "homosexual", "trans", "hidden"]
- *                 example: "male"
+ *                 enum: ["Male", "Female", "Homosexual", "Trans", "Hidden"]
+ *                 example: "Male"
  *     responses:
  *       200:
  *         description: User updated successfully
+ *       400:
+ *         description: Bad request. Missing or incorrect data in the request body
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
  */
 router.put("/:id", getJwtMiddleware, updateUserController);
 

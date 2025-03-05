@@ -12,20 +12,24 @@ const options = {
     },
     servers: [{ url: "http://localhost:5000" }],
     tags: [
-      { name: "Users", description: "API to manage Users", order: 1 },
-      { name: "Auth", description: "API to manage Auth Functions", order: 2 },
-      { name: "Tasks", description: "API to manage Tasks", order: 3 },
+      { name: "Users", description: "API to manage Users" },
+      { name: "Auth", description: "API to manage Auth Functions" },
+      { name: "Tasks", description: "API to manage Tasks" },
     ],
     components: {
       securitySchemes: {
-        cookieAuth: {
-          type: "apiKey",
-          in: "cookie",
-          name: "token", // 🔹 Nombre de la cookie donde se almacena el JWT
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
         },
       },
     },
-    security: [{ cookieAuth: [] }], // 🔹 Aplica autenticación globalmente
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
   },
   apis: ["./src/routes/*.ts", "./dist/routes/*.js"],
 };
@@ -35,7 +39,6 @@ const swaggerSpec = swaggerJsDoc(options);
 export const setupSwagger = (app: Express) => {
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
     swaggerOptions: {
-      withCredentials: true, // 🔹 Habilita el envío de cookies en Swagger
       tagsSorter: "alpha",
       operationsSorter: "method",
     },

@@ -30,7 +30,7 @@ export const register = async (req: Request, res: Response, next: NextFunction):
 
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
-    const user = req.user; // Asegúrate de que req.user existe
+    const user = req.user; // req.user ya contiene el usuario autenticado
 
     if (!user) {
       res.status(400).json({ message: "User not found" });
@@ -42,15 +42,10 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       process.env.JWT_SECRET || "ToDoDEVU",
       { expiresIn: "1h" }
     );
-    res.cookie("authToken", token, {
-      httpOnly: true, // Protecting the accses to the token by JavaScript on the frontend.
-      secure: process.env.NODE_ENV === "production", // Just will be send it by HTTPS in production.
-      sameSite: "strict", // Improve the security limiting the sends of the token
-      maxAge: 3600000, // Expire in 1 hour
-    });
+
     res.status(200).json({
-      message: "Login successfuly",
-      token,
+      message: "Login successfully",
+      token, // Enviamos el token directamente en la respuesta
       user: {
         name: user.name,
         email: user.email,
@@ -59,18 +54,5 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-export const logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    res.clearCookie("authToken", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    });
-    res.status(200).json({ message: "Successful Logout" });
-  } catch (error) {
-    next(error);
   }
 };
